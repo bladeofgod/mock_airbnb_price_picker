@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slider_demo/combine_demo/mock_airbnb_price_picker.dart';
 import 'package:flutter_slider_demo/price_slider.dart';
 
 void main() => runApp(MyApp());
@@ -13,7 +14,8 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: HousePrice(),
+      //home: HousePrice(),
+      home: PricePicker(),
     );
   }
 }

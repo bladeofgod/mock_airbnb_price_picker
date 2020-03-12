@@ -108,7 +108,7 @@ class _HousePriceState extends State<HousePrice> {
         Stack(
           children: <Widget>[
             Container(// 黄色横线
-              color: Colors.white,
+              color: Colors.purple,
               height: 30,
               width: screenWidth - 40,
               alignment: Alignment.center,
@@ -118,7 +118,7 @@ class _HousePriceState extends State<HousePrice> {
                 width: screenWidth - 40,
               ),
             ),
-            Positioned(// 左边黑色横线
+            Positioned(// 左边黑色竖线
                 left: 0,
                 top: 13,
                 child:Container(
@@ -130,7 +130,7 @@ class _HousePriceState extends State<HousePrice> {
                   ),
                 )
             ),
-            Positioned(// 右边黑色横线
+            Positioned(// 右边黑色竖线
                 right: 0,
                 top: 13,
                 child:Container(
