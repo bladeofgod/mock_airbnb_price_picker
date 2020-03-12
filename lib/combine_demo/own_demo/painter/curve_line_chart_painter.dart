@@ -13,6 +13,9 @@ import 'package:flutter_slider_demo/combine_demo/view/chart_bean.dart';
 
 class CurveLineChartPainter extends BasePainter{
 
+  double leftValue, // 左侧控制值，可以控制其实绘制点
+      rightValue; //右侧控制值，可以控制其实绘制点
+
   List<ChartBean> chartBeans; //数据块
 
   bool isCurve; //是否曲线绘制
@@ -39,7 +42,7 @@ class CurveLineChartPainter extends BasePainter{
 
   CurveLineChartPainter({@required this.chartBeans,
     this.isCurve = true,this.shaderColors, this.lineColor,
-    this.yNum, this.lineWidth,});
+    this.yNum, this.lineWidth,this.leftValue = 0.2,this.rightValue = 0.8});
 
 
   @override
@@ -49,9 +52,9 @@ class CurveLineChartPainter extends BasePainter{
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
+  bool shouldRepaint(CurveLineChartPainter oldDelegate) {
 
-    return true;
+    return oldDelegate.leftValue != leftValue || oldDelegate.rightValue != rightValue;
   }
 
   //绘制曲线或者折线
@@ -69,14 +72,24 @@ class CurveLineChartPainter extends BasePainter{
     if (maxMin[0] <= 0) return;
     var pathMetrics = path.computeMetrics(forceClosed: false);
     var list = pathMetrics.toList();
+    //如果由 leftValue,rightValue 来控制表的绘制区间的话，需要进行对list的截取
+    //抽取长度
+    var length = list.length.toInt() -
+                    (list.length.toInt() * leftValue) - (list.length.toInt() * (1-rightValue));
     //动画value,如果不用动画 直接取 list.length.toInt
-    var length = list.length.toInt();
+    //var length = value * list.length.toInt();
+    //var length = list.length.toInt();
     Path linePath = new Path();
     //填充颜色区域
     Path shadowPath = new Path();
+    shadowPath.moveTo(endX * leftValue, startY);
     for (int i = 0; i < length; i++) {
+      //开始抽取位置
+      double startExtr = list[i].length * leftValue;
+      //结束抽取位置
+      double endExtr = list[i].length * rightValue;
       var extractPath =
-      list[i].extractPath(0, list[i].length , startWithMoveTo: true);
+      list[i].extractPath(startExtr, endExtr , startWithMoveTo: true);
       linePath.addPath(extractPath, Offset(0, 0));
       shadowPath = extractPath;
     }
@@ -92,8 +105,8 @@ class CurveLineChartPainter extends BasePainter{
 
       ///从path的最后一个点连接起始点，形成一个闭环
       shadowPath
-        ..lineTo(startX + _fixedWidth , startY)
-        ..lineTo(startX, startY)
+        ..lineTo(startX + (_fixedWidth * rightValue) , startY)
+        ..lineTo((startX + endX * leftValue  ), startY)
         ..close();
 
       canvas
