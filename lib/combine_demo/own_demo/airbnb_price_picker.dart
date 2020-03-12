@@ -50,16 +50,16 @@ class AirbnbPricePickerState extends State<AirbnbPricePicker> {
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
       isCurve: true,
+      yNum: 8,
       lineWidth: 4,
       lineColor: Colors.blueAccent,
       shaderColors: [
-        Colors.blueAccent.withOpacity(0.3),
-        Colors.blueAccent.withOpacity(0.1)
+        Colors.orange.withOpacity(0.8),
+        Colors.orangeAccent.withOpacity(0.5)
       ],
     );
 
     return Container(
-      margin: EdgeInsets.all(8),
       color: Colors.green[500],
       child: curveChartLine,
     );
