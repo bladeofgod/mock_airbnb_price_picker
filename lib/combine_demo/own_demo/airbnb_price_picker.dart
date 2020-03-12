@@ -40,9 +40,9 @@ class AirbnbPricePickerState extends State<AirbnbPricePicker> {
       chartBeans: [
         ChartBean(x: "\$500", y: 24),
         ChartBean(x: "\$800", y: 14),
-        ChartBean(x: "\$1800", y: 5),
-        ChartBean(x: "\$1200", y: 8),
-        ChartBean(x: "\$2000", y: 2),
+        ChartBean(x: "\$1800", y: 25),
+        ChartBean(x: "\$1200", y: 18),
+        ChartBean(x: "\$2000", y: 32),
         ChartBean(x: "\$1100", y: 48),
         ChartBean(x: "\$1400", y: 32),
       ],

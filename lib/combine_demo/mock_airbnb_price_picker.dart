@@ -62,6 +62,17 @@ class PricePickerState extends State<PricePicker> {
           SizedBox(
             height: 20,
           ),
+          RaisedButton(
+            child: Text("combine demo ( price slider)"),
+            onPressed: (){
+              Navigator.of(context).push(new MaterialPageRoute(builder: (ctx){
+                return AirbnbPricePicker();
+              }));
+            },
+          ),
+          SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );
