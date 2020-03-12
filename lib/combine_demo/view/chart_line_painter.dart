@@ -32,12 +32,14 @@ class ChartLinePainter extends BasePainter {
   double startX, endX, startY, endY;
   double _fixedHeight, _fixedWidth; //宽高
   Path path;
-  Map<double, Offset> _points = new Map();
+
+  //key =  x点   y 等于offset(x,y)
+  Map<double, Offset> _points = new Map();//数据 在 屏幕上的 位置
 
   bool _isAnimationEnd = false;
   bool isCanTouch;
 
-  Offset globalPosition;
+  Offset globalPosition; //手指点击位置
   static const Color defaultColor = Colors.deepPurple;
 
   ChartLinePainter(
@@ -121,6 +123,7 @@ class ChartLinePainter extends BasePainter {
     endY = basePadding * 2;
     _fixedHeight = startY - endY;
     _fixedWidth = endX - startX;
+    //y轴 最大和最小值
     maxMin = calculateMaxMin(chartBeans);
   }
 
@@ -129,27 +132,39 @@ class ChartLinePainter extends BasePainter {
     if (path == null) {
       if (chartBeans != null && chartBeans.length > 0 && maxMin[0] > 0) {
         path = Path();
-        double preX, preY, currentX, currentY;
+        double preX,//前一个数据的 x 值
+            preY,//前一个数据的 y 值
+            currentX,
+            currentY;
         int length = chartBeans.length > 7 ? 7 : chartBeans.length;
         double W = _fixedWidth / (length - 1); //两个点之间的x方向距离
+        //数值个数 这里是7
         for (int i = 0; i < length; i++) {
           if (i == 0) {
-            var key = startX;
+            var key = startX;//第一个数的x值
+            // chartBeans[i].y / maxMin[0] 算出当前y值为最大的值得百分比， *  表高 得出具体的y值
+            //用 startY - y值  可以得到最终在屏幕上的y值
             var value = (startY - chartBeans[i].y / maxMin[0] * _fixedHeight);
+            //移动到对应数据的位置
             path.moveTo(key, value);
+            //保存下来这个数据的位置
             _points[key] = Offset(key, value);
             continue;
           }
+          //绘制完第一个点后，向右平移一个 宽度（w）
           currentX = startX + W * i;
+          //前一个数据的 x 值
           preX = startX + W * (i - 1);
-
+          //前一个数据的y值
           preY = (startY - chartBeans[i - 1].y / maxMin[0] * _fixedHeight);
           currentY = (startY - chartBeans[i].y / maxMin[0] * _fixedHeight);
           _points[currentX] = Offset(currentX, currentY);
 
           if (isCurve) {
-            path.cubicTo((preX + currentX) / 2, preY, (preX + currentX) / 2,
-                currentY, currentX, currentY);
+            //绘制路径
+            path.cubicTo((preX + currentX) / 2, preY, // control point 1
+                (preX + currentX) / 2, currentY,      //  control point 2
+                currentX, currentY);                  // target point
           } else {
             path.lineTo(currentX, currentY);
           }
@@ -266,8 +281,10 @@ class ChartLinePainter extends BasePainter {
     if (maxMin[0] <= 0) return;
     var pathMetrics = path.computeMetrics(forceClosed: false);
     var list = pathMetrics.toList();
+    //动画value,如果不用动画 直接取 list.length.toInt
     var length = value * list.length.toInt();
     Path linePath = new Path();
+    //填充颜色区域
     Path shadowPath = new Path();
     for (int i = 0; i < length; i++) {
       var extractPath =

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChartBean {
-  String x; //x轴
-  double y; //y轴
+  String x; //x轴 值
+  double y; //y轴 值
   int millisSeconds;
   Color color;
 
