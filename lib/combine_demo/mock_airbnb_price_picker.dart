@@ -52,7 +52,7 @@ class PricePickerState extends State<PricePicker> {
             height: 20,
           ),
           RaisedButton(
-            child: Text("combine demo ( Price Picker)"),
+            child: Text("combine demo ( curve chart)"),
             onPressed: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (ctx){
                 return AirbnbPricePicker();

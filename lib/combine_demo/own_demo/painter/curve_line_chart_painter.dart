@@ -37,9 +37,9 @@ class CurveLineChartPainter extends BasePainter{
   //key =  x点   y 等于offset(x,y)
   Map<double, Offset> _points = new Map();//数据 在 屏幕上的 位置
 
-  CurveLineChartPainter({@required this.chartBeans, this.isCurve = true,this.shaderColors, this.lineColor,
-    this.maxMin, this.yNum, this.lineWidth, this.startX, this.endX,
-    this.startY, this.endY, this.path,});
+  CurveLineChartPainter({@required this.chartBeans,
+    this.isCurve = true,this.shaderColors, this.lineColor,
+    this.yNum, this.lineWidth,});
 
 
   @override
