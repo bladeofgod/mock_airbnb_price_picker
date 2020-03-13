@@ -19,10 +19,11 @@ class CurveChartLine extends StatefulWidget{
   final Color xyColor; //xy轴的颜色
   final Color backgroundColor; //绘制的背景色
   final int yNum;
+  final double leftValue,rightValue;
 
   CurveChartLine({this.size, this.lineWidth, this.isCurve, this.chartBeans,
     this.shaderColors, this.lineColor, this.xyColor, this.backgroundColor,
-    this.yNum}); //y刻度文本的数量
+    this.yNum,@required this.leftValue,@required this.rightValue }); //y刻度文本的数量
 
 
 
@@ -45,7 +46,9 @@ class CurveChartLineState extends State<CurveChartLine>
         shaderColors: widget.shaderColors,
         isCurve: widget.isCurve,
         lineWidth: widget.lineWidth,
-        yNum: widget.yNum,);
+        yNum: widget.yNum,
+        leftValue: widget.leftValue,
+        rightValue: widget.rightValue);
     return CustomPaint(
       size: widget.size,
       painter: widget.backgroundColor == null ? painter : null,

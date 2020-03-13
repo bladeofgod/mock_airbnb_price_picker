@@ -10,34 +10,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/view/chart_bean.dart';
 
+
+
 class PriceSliderWidget extends StatefulWidget{
-  final List<ChartBean> list = [
-    ChartBean(x: "\$2000", y: 32),
-    ChartBean(x: "\$1100", y: 48),
-    ChartBean(x: "\$1400", y: 32),
-    ChartBean(x: "\$500", y: 24),
-    ChartBean(x: "\$800", y: 50),
-    ChartBean(x: "\$1800", y: 25),
-    ChartBean(x: "\$1200", y: 18),
-    ChartBean(x: "\$2000", y: 32),
-    ChartBean(x: "\$1100", y: 48),
-    ChartBean(x: "\$1400", y: 32),
-  ];
+  final List<ChartBean> list ;
   //拖拽时，出现的指示线
-  Color leftIndicatorLineColor = Colors.red;
-  Color rightIndicatorLineColor = Colors.red;
+  final Color leftIndicatorLineColor ;
+  final Color rightIndicatorLineColor ;
 
   //widget 宽和高
-  double rootWidth,
-          rootHeight = 300;
+  final double rootWidth,
+          rootHeight;
 
   //滑块监听 目前参数暂定为 : param1 : 是否滑动  param2 : 当前index
-  Function rightSlidListener,leftSlidListener;
+  final Function rightSlidListener,leftSlidListener;
 
 
-
-
-
+  PriceSliderWidget({@required this.list,
+    this.leftIndicatorLineColor = Colors.red,
+    this.rightIndicatorLineColor = Colors.red,
+    this.rootWidth,
+    this.rootHeight = 300,
+    this.rightSlidListener, this.leftSlidListener});
 
   @override
   State<StatefulWidget> createState() {
@@ -95,7 +89,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
             //SizedBox(height: 10,),
             /// x轴 +  左右滑块
             Container(
-              height: 300,
+              height: widget.rootHeight,
               color: Colors.yellowAccent,
               child: Stack(
                 alignment: AlignmentDirectional.bottomStart,
