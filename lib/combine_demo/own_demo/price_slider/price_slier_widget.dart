@@ -31,6 +31,9 @@ class PriceSliderWidget extends StatefulWidget{
   double rootWidth,
           rootHeight = 300;
 
+  //滑块监听 目前参数暂定为 : param1 : 是否滑动  param2 : 当前index
+  Function rightSlidListener,leftSlidListener;
+
 
 
 
@@ -62,6 +65,10 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
   int _leftImageCurrentIndex = 0; // 左边选中的价格索引
   int _rightImageCurrentIndex = 0; // 右边选中的价格索引
 
+  //是否拖动中
+  bool isLeftDragging = false;
+  bool isRightDragging = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -83,18 +90,25 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             //_priceRangeBlock(),
-            SizedBox(height: 10,),
+            //SizedBox(height: 10,),
             //_priceBlock(_leftPrice, _rightPrice),
-            SizedBox(height: 10,),
+            //SizedBox(height: 10,),
             /// x轴 +  左右滑块
-            Stack(
-              alignment: AlignmentDirectional.bottomStart,
-              overflow: Overflow.visible,
-              children: <Widget>[
-                _lineBlock(context, screenWidth),
-                _leftImageBlock(context, screenWidth),
-                _rightImageBlock(context, screenWidth),
-              ],
+            Container(
+              height: 300,
+              color: Colors.yellowAccent,
+              child: Stack(
+                alignment: AlignmentDirectional.bottomStart,
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Positioned(
+                    bottom: 15,
+                    child: _lineBlock(context, screenWidth),
+                  ),
+                  _leftImageBlock(context, screenWidth),
+                  _rightImageBlock(context, screenWidth),
+                ],
+              ),
             ),
           ],
         ),
@@ -128,87 +142,86 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+                Visibility(
+                  visible: isLeftDragging,
+                  child: Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+                ),
+
                 Container(
                   width: 4,
                   height: 100,
                   color: Colors.red,
                 ),
+                GestureDetector(
+                  child: _imageItem(),
+                  //水平方向移动
+                  onHorizontalDragUpdate: (DragUpdateDetails details) {
+                    isLeftDragging = true;
+                    print('拖拽中');
+                    if(_leftImageMargin < 20) {//处理左边边界
+                      _leftImageMargin = 20;
+                      _leftBlackLineW = 2;
+                    } else if (((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) {
+                      // 处理两球相遇情况
+                      _leftImageMargin = screenWidth-(_rightImageMargin+singleW+15);
+                      _leftBlackLineW = _leftImageMargin-20;
+                    } else {
+                      _leftImageMargin += details.delta.dx;
+                      _leftBlackLineW = _leftImageMargin-20 >= 0 ? _leftImageMargin-20 : 2;
+                    }
+
+                    double _leftImageMarginFlag = _leftImageMargin;
+                    print('拖拽结束');
+                    //刷新上方的 price indicator
+                    for(int i = 0; i< widget.list.length;i++){
+                      if(_leftImageMarginFlag < singleW * (0.5 + i)){
+                        _leftPrice = widget.list[i].x;
+                        _leftImageCurrentIndex = i;
+                        break;
+                      }
+                    }
+                    setState(() {});// 刷新UI
+                    if(widget.leftSlidListener != null){
+                      widget.leftSlidListener(true,_leftImageCurrentIndex);
+                    }
+                  },
+                  onHorizontalDragEnd: (DragEndDetails details) {
+                    isLeftDragging = false;
+                    double singleW = (screenWidth-40)/segmentPart;
+                    double _leftImageMarginFlag = _leftImageMargin;
+                    print('拖拽结束');
+                    for(int i = 0; i< widget.list.length;i++){
+                      if(_leftImageMarginFlag < singleW * (0.5 + i)){
+                        if(i == 0){
+                          _leftImageMargin = 20;
+
+                        }else{
+                          _leftImageMargin = singleW * i + 5;
+
+                        }
+                        _leftPrice = widget.list[i].x;
+                        _leftImageCurrentIndex = i;
+                        break;
+                      }
+                    }
+
+                    print('选中第$_leftImageCurrentIndex个');
+                    setState(() {});// 刷新UI
+
+                    if(widget.leftSlidListener != null){
+                      widget.leftSlidListener(false,_leftImageCurrentIndex);
+                    }
+                  },
+                ),
+
+                Visibility(
+                  visible:  ! isLeftDragging,
+                  child: Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+                ),
+
               ],
             ),
-            GestureDetector(
-              child: _imageItem(),
-              //水平方向移动
-              onHorizontalDragUpdate: (DragUpdateDetails details) {
-                print('拖拽中');
-                if(_leftImageMargin < 20) {//处理左边边界
-                  _leftImageMargin = 20;
-                  _leftBlackLineW = 2;
-                } else if (((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) {
-                  // 处理两球相遇情况
-                  _leftImageMargin = screenWidth-(_rightImageMargin+singleW+15);
-                  _leftBlackLineW = _leftImageMargin-20;
-                } else {
-                  _leftImageMargin += details.delta.dx;
-                  _leftBlackLineW = _leftImageMargin-20 >= 0 ? _leftImageMargin-20 : 2;
-                }
-                setState(() {});// 刷新UI
-              },
-              onHorizontalDragEnd: (DragEndDetails details) {
-                double singleW = (screenWidth-40)/segmentPart;
-                double _leftImageMarginFlag = _leftImageMargin;
-                print('拖拽结束');
-                for(int i = 0; i< widget.list.length;i++){
-                  if(_leftImageMarginFlag < singleW * (0.5 + i)){
-                    if(i == 0){
-                      _leftImageMargin = 20;
 
-                    }else{
-                      _leftImageMargin = singleW * i + 5;
-
-                    }
-                    _leftPrice = widget.list[i].x;
-                    _leftImageCurrentIndex = i;
-                    break;
-                  }
-                }
-//            if(_leftImageMarginFlag <singleW/2) {
-//              _leftImageMargin = 20;
-//              _leftBlackLineW = 2;
-//              _leftImageCurrentIndex = 0;
-//              _leftPrice = '¥0';
-//            } else if (_leftImageMarginFlag <singleW*1.5) {
-//              _leftImageMargin = singleW+5;
-//              _leftBlackLineW = _leftImageMargin;
-//              _leftImageCurrentIndex = 1;
-//              _leftPrice = '¥200';
-//            } else if (_leftImageMarginFlag < singleW*2.5) {
-//              _leftImageMargin = singleW*2+5;
-//              _leftBlackLineW = _leftImageMargin;
-//              _leftImageCurrentIndex = 2;
-//              _leftPrice = '¥300';
-//            } else if (_leftImageMarginFlag < singleW*3.5) {
-//              _leftImageMargin = singleW*3+5;
-//              _leftBlackLineW = _leftImageMargin;
-//              _leftImageCurrentIndex = 3;
-//              _leftPrice = '¥400';
-//            } else if (_leftImageMarginFlag < singleW*4.5) {
-//              _leftImageMargin = singleW*4+5;
-//              _leftBlackLineW = _leftImageMargin;
-//              _leftImageCurrentIndex = 4;
-//              _leftPrice = '¥500';
-//            } else if (_leftImageMarginFlag < singleW*5.5) {
-//              _leftImageMargin = singleW*5+5;
-//              _leftBlackLineW = _leftImageMargin;
-//              _leftImageCurrentIndex = 5;
-//              _leftPrice = '¥600';
-//            } else {
-//
-//            }
-                print('选中第$_leftImageCurrentIndex个');
-                setState(() {});// 刷新UI
-              },
-            ),
           ],
         ),
     );
@@ -230,84 +243,81 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+              Visibility(
+                visible: isRightDragging,
+                child: Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+              ),
+
               Container(
                 width: 4,
                 height: 100,
                 color: Colors.red,
               ),
+              GestureDetector(
+                child: _imageItem(),
+                //水平方向移动
+                onHorizontalDragUpdate: (DragUpdateDetails details) {
+                  isRightDragging = true;
+                  print(_rightImageMargin);
+                  if(_rightImageMargin < 20) {//处理右边边界
+                    _rightImageMargin = 20;
+                    _rightBlackLineW = 2;
+                  } else if(((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) { // 处理两球相遇情况
+                    _rightImageMargin = screenWidth-(_leftImageMargin+15+singleW);
+                    _rightBlackLineW = _rightImageMargin-20;
+                  } else {
+                    _rightImageMargin -= details.delta.dx;
+                    _rightBlackLineW = _rightImageMargin-20 >= 0 ? _rightImageMargin-20 : 2;
+                  }
+                  //double singleW = (screenWidth-40)/segmentPart;
+                  double _rightImageMarginFlag = _rightImageMargin;
+                  print('拖拽结束');
+                  for(int i = 0; i< widget.list.length;i++){
+                    if(_rightImageMarginFlag < singleW * (0.5 + i)){
+                      _rightPrice = widget.list[(widget.list.length - 1) -i].x;
+                      _rightImageCurrentIndex = i;
+                      break;
+                    }
+                  }
+                  setState(() {}); // 刷新UI
+                  if(widget.rightSlidListener != null){
+                    widget.rightSlidListener(true,_rightImageCurrentIndex);
+                  }
+                },
+                onHorizontalDragEnd: (DragEndDetails details){
+                  isRightDragging = false;
+                  double singleW = (screenWidth-40)/segmentPart;
+                  double _rightImageMarginFlag = _rightImageMargin;
+                  print('拖拽结束');
+                  for(int i = 0; i< widget.list.length;i++){
+                    if(_rightImageMarginFlag < singleW * (0.5 + i)){
+                      if(i == 0){
+                        _rightImageMargin = 20;
+
+                      }else{
+                        _rightImageMargin = singleW * i + 5;
+
+                      }
+                      _rightPrice = widget.list[(widget.list.length - 1) -i].x;
+                      _rightImageCurrentIndex = i;
+                      break;
+                    }
+                  }
+                  print('选中第$_rightImageCurrentIndex个');
+                  setState(() {});// 刷新UI
+
+                  if(widget.rightSlidListener != null){
+                    widget.rightSlidListener(false,_rightImageCurrentIndex);
+                  }
+                },
+              ),
+              Visibility(
+                visible: ! isRightDragging,
+                child: Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+              ),
             ],
           ),
-          GestureDetector(
-            child: _imageItem(),
-            //水平方向移动
-            onHorizontalDragUpdate: (DragUpdateDetails details) {
-              print(_rightImageMargin);
-              if(_rightImageMargin < 20) {//处理右边边界
-                _rightImageMargin = 20;
-                _rightBlackLineW = 2;
-              } else if(((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) { // 处理两球相遇情况
-                _rightImageMargin = screenWidth-(_leftImageMargin+15+singleW);
-                _rightBlackLineW = _rightImageMargin-20;
-              } else {
-                _rightImageMargin -= details.delta.dx;
-                _rightBlackLineW = _rightImageMargin-20 >= 0 ? _rightImageMargin-20 : 2;
-              }
-              setState(() {}); // 刷新UI
-            },
-            onHorizontalDragEnd: (DragEndDetails details){
-              double singleW = (screenWidth-40)/segmentPart;
-              double _rightImageMarginFlag = _rightImageMargin;
-              print('拖拽结束');
-              for(int i = 0; i< widget.list.length;i++){
-                if(_rightImageMarginFlag < singleW * (0.5 + i)){
-                  if(i == 0){
-                    _rightImageMargin = 20;
 
-                  }else{
-                    _rightImageMargin = singleW * i + 5;
-
-                  }
-                  _rightPrice = widget.list[(widget.list.length - 1) -i].x;
-                  _rightImageCurrentIndex = i;
-                  break;
-                }
-              }
-//          if(_rightImageMarginFlag <singleW/2) {
-//            _rightImageMargin = 20;
-//            _rightBlackLineW = 2;
-//            _rightImageCurrentIndex = 0;
-//            _rightPrice = '不限';
-//          } else if (_rightImageMarginFlag <singleW*1.5) {
-//            _rightImageMargin = singleW+5;
-//            _rightBlackLineW = _rightImageMargin;
-//            _rightImageCurrentIndex = 1;
-//            _rightPrice = '¥600';
-//          } else if (_rightImageMarginFlag < singleW*2.5) {
-//            _rightImageMargin = singleW*2+5;
-//            _rightBlackLineW = _rightImageMargin;
-//            _rightImageCurrentIndex = 2;
-//            _rightPrice = '¥500';
-//          } else if (_rightImageMarginFlag < singleW*3.5) {
-//            _rightImageMargin = singleW*3+5;
-//            _rightBlackLineW = _rightImageMargin;
-//            _rightImageCurrentIndex = 3;
-//            _rightPrice = '¥400';
-//          } else if (_rightImageMarginFlag < singleW*4.5) {
-//            _rightImageMargin = singleW*4+5;
-//            _rightBlackLineW = _rightImageMargin;
-//            _rightImageCurrentIndex = 4;
-//            _rightPrice = '¥300';
-//          } else if (_rightImageMarginFlag < singleW*5.5) {
-//            _rightImageMargin = singleW*5+5;
-//            _rightBlackLineW = _rightImageMargin;
-//            _rightImageCurrentIndex = 5;
-//            _rightPrice = '¥200';
-//          }
-              print('选中第$_rightImageCurrentIndex个');
-              setState(() {});// 刷新UI
-            },
-          ),
         ],
       ),
     );
