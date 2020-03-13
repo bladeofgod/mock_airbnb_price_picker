@@ -11,16 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/view/chart_bean.dart';
 
 class PriceSliderWidget extends StatefulWidget{
-  @override
-  State<StatefulWidget> createState() {
-
-    return PriceSliderWidgetState();
-  }
-
-}
-
-class PriceSliderWidgetState extends State<PriceSliderWidget> {
-
   final List<ChartBean> list = [
     ChartBean(x: "\$2000", y: 32),
     ChartBean(x: "\$1100", y: 48),
@@ -33,6 +23,30 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     ChartBean(x: "\$1100", y: 48),
     ChartBean(x: "\$1400", y: 32),
   ];
+  //拖拽时，出现的指示线
+  Color leftIndicatorLineColor = Colors.red;
+  Color rightIndicatorLineColor = Colors.red;
+
+  //widget 宽和高
+  double rootWidth,
+          rootHeight = 200;
+
+
+
+
+
+
+  @override
+  State<StatefulWidget> createState() {
+
+    return PriceSliderWidgetState();
+  }
+
+}
+
+class PriceSliderWidgetState extends State<PriceSliderWidget> {
+
+
 
   int segmentPart;
 
@@ -53,7 +67,9 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     // TODO: implement initState
     super.initState();
     //分割多少块
-    segmentPart = list.length - 1;
+    segmentPart = widget.list.length - 1;
+    _leftPrice = widget.list[0].x;
+    _rightPrice = widget.list.last.x;
   }
 
   @override
@@ -61,6 +77,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Material(
       child: Container(
+        height: widget.rootHeight,
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -71,6 +88,8 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
             SizedBox(height: 10,),
             /// x轴 +  左右滑块
             Stack(
+              alignment: AlignmentDirectional.bottomStart,
+              overflow: Overflow.visible,
               children: <Widget>[
                 _lineBlock(context, screenWidth),
                 _leftImageBlock(context, screenWidth),
@@ -101,43 +120,52 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     double singleW = (screenWidth-40)/segmentPart;
     return Positioned(
         left: _leftImageMargin,
-        top: 0,
-        child: GestureDetector(
-          child: _imageItem(),
-          //水平方向移动
-          onHorizontalDragUpdate: (DragUpdateDetails details) {
-            print('拖拽中');
-            if(_leftImageMargin < 20) {//处理左边边界
-              _leftImageMargin = 20;
-              _leftBlackLineW = 2;
-            } else if (((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) {
-              // 处理两球相遇情况
-              _leftImageMargin = screenWidth-(_rightImageMargin+singleW+15);
-              _leftBlackLineW = _leftImageMargin-20;
-            } else {
-              _leftImageMargin += details.delta.dx;
-              _leftBlackLineW = _leftImageMargin-20 >= 0 ? _leftImageMargin-20 : 2;
-            }
-            setState(() {});// 刷新UI
-          },
-          onHorizontalDragEnd: (DragEndDetails details) {
-            double singleW = (screenWidth-40)/segmentPart;
-            double _leftImageMarginFlag = _leftImageMargin;
-            print('拖拽结束');
-            for(int i = 0; i< list.length;i++){
-              if(_leftImageMarginFlag < singleW * (0.5 + i)){
-                if(i == 0){
+        //top: 0,
+        child: Stack(
+          alignment: AlignmentDirectional.bottomCenter,
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Container(
+              width: 4,
+              height: 100,
+              color: Colors.red,
+            ),
+            GestureDetector(
+              child: _imageItem(),
+              //水平方向移动
+              onHorizontalDragUpdate: (DragUpdateDetails details) {
+                print('拖拽中');
+                if(_leftImageMargin < 20) {//处理左边边界
                   _leftImageMargin = 20;
-
-                }else{
-                  _leftImageMargin = singleW * i + 5;
-
+                  _leftBlackLineW = 2;
+                } else if (((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) {
+                  // 处理两球相遇情况
+                  _leftImageMargin = screenWidth-(_rightImageMargin+singleW+15);
+                  _leftBlackLineW = _leftImageMargin-20;
+                } else {
+                  _leftImageMargin += details.delta.dx;
+                  _leftBlackLineW = _leftImageMargin-20 >= 0 ? _leftImageMargin-20 : 2;
                 }
-                _leftPrice = list[i].x;
-                _leftImageCurrentIndex = i;
-                break;
-              }
-            }
+                setState(() {});// 刷新UI
+              },
+              onHorizontalDragEnd: (DragEndDetails details) {
+                double singleW = (screenWidth-40)/segmentPart;
+                double _leftImageMarginFlag = _leftImageMargin;
+                print('拖拽结束');
+                for(int i = 0; i< widget.list.length;i++){
+                  if(_leftImageMarginFlag < singleW * (0.5 + i)){
+                    if(i == 0){
+                      _leftImageMargin = 20;
+
+                    }else{
+                      _leftImageMargin = singleW * i + 5;
+
+                    }
+                    _leftPrice = widget.list[i].x;
+                    _leftImageCurrentIndex = i;
+                    break;
+                  }
+                }
 //            if(_leftImageMarginFlag <singleW/2) {
 //              _leftImageMargin = 20;
 //              _leftBlackLineW = 2;
@@ -171,10 +199,12 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
 //            } else {
 //
 //            }
-            print('选中第$_leftImageCurrentIndex个');
-            setState(() {});// 刷新UI
-          },
-        )
+                print('选中第$_leftImageCurrentIndex个');
+                setState(() {});// 刷新UI
+              },
+            ),
+          ],
+        ),
     );
   }
 
@@ -185,42 +215,51 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     double singleW = (screenWidth-40)/segmentPart;
     return Positioned(
       right: _rightImageMargin,
-      top: 0,
-      child: GestureDetector(
-        child: _imageItem(),
-        //水平方向移动
-        onHorizontalDragUpdate: (DragUpdateDetails details) {
-          print(_rightImageMargin);
-          if(_rightImageMargin < 20) {//处理右边边界
-            _rightImageMargin = 20;
-            _rightBlackLineW = 2;
-          } else if(((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) { // 处理两球相遇情况
-            _rightImageMargin = screenWidth-(_leftImageMargin+15+singleW);
-            _rightBlackLineW = _rightImageMargin-20;
-          } else {
-            _rightImageMargin -= details.delta.dx;
-            _rightBlackLineW = _rightImageMargin-20 >= 0 ? _rightImageMargin-20 : 2;
-          }
-          setState(() {}); // 刷新UI
-        },
-        onHorizontalDragEnd: (DragEndDetails details){
-          double singleW = (screenWidth-40)/segmentPart;
-          double _rightImageMarginFlag = _rightImageMargin;
-          print('拖拽结束');
-          for(int i = 0; i< list.length;i++){
-            if(_rightImageMarginFlag < singleW * (0.5 + i)){
-              if(i == 0){
+      //top: 0,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        overflow: Overflow.visible,
+        children: <Widget>[
+          Container(
+            width: 4,
+            height: 100,
+            color: Colors.red,
+          ),
+          GestureDetector(
+            child: _imageItem(),
+            //水平方向移动
+            onHorizontalDragUpdate: (DragUpdateDetails details) {
+              print(_rightImageMargin);
+              if(_rightImageMargin < 20) {//处理右边边界
                 _rightImageMargin = 20;
-
-              }else{
-                _rightImageMargin = singleW * i + 5;
-
+                _rightBlackLineW = 2;
+              } else if(((screenWidth-(_rightImageMargin+30))-(_leftImageMargin+30))<(singleW-45)) { // 处理两球相遇情况
+                _rightImageMargin = screenWidth-(_leftImageMargin+15+singleW);
+                _rightBlackLineW = _rightImageMargin-20;
+              } else {
+                _rightImageMargin -= details.delta.dx;
+                _rightBlackLineW = _rightImageMargin-20 >= 0 ? _rightImageMargin-20 : 2;
               }
-              _rightPrice = list[(list.length - 1) -i].x;
-              _rightImageCurrentIndex = i;
-              break;
-            }
-          }
+              setState(() {}); // 刷新UI
+            },
+            onHorizontalDragEnd: (DragEndDetails details){
+              double singleW = (screenWidth-40)/segmentPart;
+              double _rightImageMarginFlag = _rightImageMargin;
+              print('拖拽结束');
+              for(int i = 0; i< widget.list.length;i++){
+                if(_rightImageMarginFlag < singleW * (0.5 + i)){
+                  if(i == 0){
+                    _rightImageMargin = 20;
+
+                  }else{
+                    _rightImageMargin = singleW * i + 5;
+
+                  }
+                  _rightPrice = widget.list[(widget.list.length - 1) -i].x;
+                  _rightImageCurrentIndex = i;
+                  break;
+                }
+              }
 //          if(_rightImageMarginFlag <singleW/2) {
 //            _rightImageMargin = 20;
 //            _rightBlackLineW = 2;
@@ -252,9 +291,11 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
 //            _rightImageCurrentIndex = 5;
 //            _rightPrice = '¥200';
 //          }
-          print('选中第$_rightImageCurrentIndex个');
-          setState(() {});// 刷新UI
-        },
+              print('选中第$_rightImageCurrentIndex个');
+              setState(() {});// 刷新UI
+            },
+          ),
+        ],
       ),
     );
   }
@@ -273,13 +314,13 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
         Stack(
           children: <Widget>[
             Container(// 黄色横线
-              color: Colors.purple,
+              color: Colors.green,
               height: 30,
               width: screenWidth - 40,
               alignment: Alignment.center,
               child: Container(
                 color: Color.fromRGBO(254, 216, 54, 1),
-                height: 4,
+                height: 2,
                 width: screenWidth - 40,
               ),
             ),
