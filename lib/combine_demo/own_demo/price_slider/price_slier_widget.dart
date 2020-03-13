@@ -29,7 +29,7 @@ class PriceSliderWidget extends StatefulWidget{
 
   //widget 宽和高
   double rootWidth,
-          rootHeight = 200;
+          rootHeight = 300;
 
 
 
@@ -82,9 +82,9 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _priceRangeBlock(),
+            //_priceRangeBlock(),
             SizedBox(height: 10,),
-            _priceBlock(_leftPrice, _rightPrice),
+            //_priceBlock(_leftPrice, _rightPrice),
             SizedBox(height: 10,),
             /// x轴 +  左右滑块
             Stack(
@@ -125,10 +125,16 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
           alignment: AlignmentDirectional.bottomCenter,
           overflow: Overflow.visible,
           children: <Widget>[
-            Container(
-              width: 4,
-              height: 100,
-              color: Colors.red,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+                Container(
+                  width: 4,
+                  height: 100,
+                  color: Colors.red,
+                ),
+              ],
             ),
             GestureDetector(
               child: _imageItem(),
@@ -220,10 +226,17 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
         alignment: AlignmentDirectional.bottomCenter,
         overflow: Overflow.visible,
         children: <Widget>[
-          Container(
-            width: 4,
-            height: 100,
-            color: Colors.red,
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+              Container(
+                width: 4,
+                height: 100,
+                color: Colors.red,
+              ),
+            ],
           ),
           GestureDetector(
             child: _imageItem(),
