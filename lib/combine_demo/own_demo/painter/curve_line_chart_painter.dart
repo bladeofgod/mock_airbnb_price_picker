@@ -42,7 +42,7 @@ class CurveLineChartPainter extends BasePainter{
 
   CurveLineChartPainter({@required this.chartBeans,
     this.isCurve = true,this.shaderColors, this.lineColor,
-    this.yNum, this.lineWidth,this.leftValue = 0.2,this.rightValue = 0.8});
+    this.yNum, this.lineWidth,this.leftValue = 0.0,this.rightValue = 1});
 
 
   @override
@@ -57,10 +57,32 @@ class CurveLineChartPainter extends BasePainter{
     return oldDelegate.leftValue != leftValue || oldDelegate.rightValue != rightValue;
   }
 
+  //x轴 path 长度
+  var xPathLength ;
+
+  //曲线路径
+  var curvePathLength;
+
+  //x轴和曲线路径长度比
+  var ratio;
+
+  initXPath(){
+    Path xPath = new Path();
+    xPath.moveTo(startX, startY);
+    xPath.lineTo(endX, endY);
+
+    var pm = xPath.computeMetrics();
+    var list = pm.toList();
+    xPathLength = list[0].length;
+
+  }
+
   //绘制曲线或者折线
   drawLine(Canvas canvas,Size size){
-
     if (chartBeans == null || chartBeans.length == 0) return;
+
+    initXPath();
+
     var paint = Paint()
       ..isAntiAlias = true
       ..strokeWidth = lineWidth
@@ -72,6 +94,12 @@ class CurveLineChartPainter extends BasePainter{
     if (maxMin[0] <= 0) return;
     var pathMetrics = path.computeMetrics(forceClosed: false);
     var list = pathMetrics.toList();
+    curvePathLength = list[0].length;
+    ratio = curvePathLength / xPathLength;
+    print("list size : ${list.length}");
+    print(" the ratio : $ratio");
+    print("curvePathLength   :  $curvePathLength");
+    print("xPathLength    : $xPathLength");
     //如果由 leftValue,rightValue 来控制表的绘制区间的话，需要进行对list的截取
     //抽取长度
     var length = list.length.toInt() -
@@ -85,9 +113,9 @@ class CurveLineChartPainter extends BasePainter{
     shadowPath.moveTo(endX * leftValue, startY);
     for (int i = 0; i < length; i++) {
       //开始抽取位置
-      double startExtr = list[i].length * leftValue;
+      double startExtr = list[i].length * (leftValue );//左侧取值用ratio进行放大
       //结束抽取位置
-      double endExtr = list[i].length * rightValue;
+      double endExtr = list[i].length * (rightValue);//右侧取值用ratio进行缩小
       var extractPath =
       list[i].extractPath(startExtr, endExtr , startWithMoveTo: true);
       linePath.addPath(extractPath, Offset(0, 0));
@@ -106,7 +134,7 @@ class CurveLineChartPainter extends BasePainter{
       ///从path的最后一个点连接起始点，形成一个闭环
       shadowPath
         ..lineTo(startX + (_fixedWidth * rightValue) , startY)
-        ..lineTo((startX + endX * leftValue  ), startY)
+        ..lineTo((startX+ (endX * leftValue ) ), startY)
         ..close();
 
       canvas
@@ -131,6 +159,8 @@ class CurveLineChartPainter extends BasePainter{
     initPath(size); //初始化路径
   }
 
+  List<Path> segmentPathList = List();
+
   initPath(Size size){
     if(path == null){
       if(chartBeans != null && chartBeans.length >0 && maxMin[0] > 0){
@@ -139,7 +169,7 @@ class CurveLineChartPainter extends BasePainter{
             preY,//前一个数据的 y 值
             currentX,
             currentY;
-        int length = chartBeans.length > 7 ? 7 : chartBeans.length;
+        int length = chartBeans.length;
         double W = _fixedWidth / (length - 1); //两个点之间的x方向距离
         //数值个数 这里是7
         for (int i = 0; i < length; i++) {

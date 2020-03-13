@@ -38,19 +38,23 @@ class AirbnbPricePickerState extends State<AirbnbPricePicker> {
       //金额500-2000
       //房屋数量10-50
       chartBeans: [
+        ChartBean(x: "\$2000", y: 32),
+        ChartBean(x: "\$1100", y: 48),
+        ChartBean(x: "\$1400", y: 32),
         ChartBean(x: "\$500", y: 24),
-        ChartBean(x: "\$800", y: 14),
+        ChartBean(x: "\$800", y: 50),
         ChartBean(x: "\$1800", y: 25),
         ChartBean(x: "\$1200", y: 18),
         ChartBean(x: "\$2000", y: 32),
         ChartBean(x: "\$1100", y: 48),
         ChartBean(x: "\$1400", y: 32),
+
       ],
       //整个图表的宽高。
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
       isCurve: true,
-      yNum: 8,
+      yNum: 11,//y轴刻度尺值 暂时无用
       lineWidth: 4,
       lineColor: Colors.blueAccent,
       shaderColors: [
