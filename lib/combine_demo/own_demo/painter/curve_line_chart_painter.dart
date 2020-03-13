@@ -42,7 +42,7 @@ class CurveLineChartPainter extends BasePainter{
 
   CurveLineChartPainter({@required this.chartBeans,
     this.isCurve = true,this.shaderColors, this.lineColor,
-    this.yNum, this.lineWidth,this.leftValue = 0.0,this.rightValue = 1});
+    this.yNum, this.lineWidth,this.leftValue = 0.2,this.rightValue = 0.8});
 
 
   @override
@@ -210,10 +210,15 @@ class CurveLineChartPainter extends BasePainter{
   //计算图表边界
   initBorder(Size size){
     ///对于预留刻度尺，具体可以根据效果 缩减
-    startX = yNum > 0 ? basePadding * 2.5 : basePadding * 2; //预留出y轴刻度值所占的空间
-    endX = size.width - basePadding * 2;
-    startY = size.height - (basePadding * 2);  //预留出x轴刻度值所占的空间
-    endY = basePadding * 2;
+//    startX = yNum > 0 ? basePadding * 2.5 : basePadding * 2; //预留出y轴刻度值所占的空间
+//    endX = size.width - basePadding * 2;
+//    startY = size.height - (basePadding * 2);  //预留出x轴刻度值所占的空间
+//    endY = basePadding * 2;
+  //不预留刻度尺
+    startX = 0;
+    endX = size.width;
+    startY = size.height;
+    endY = 0;
     _fixedHeight = startY - endY;
     _fixedWidth = endX - startX;
     maxMin = calculateMaxMin(chartBeans);
