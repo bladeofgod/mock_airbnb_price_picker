@@ -118,6 +118,7 @@ class CurveLineChartPainter extends BasePainter{
       double endExtr = list[i].length * (rightValue);//右侧取值用ratio进行缩小
       var extractPath =
       list[i].extractPath(startExtr, endExtr , startWithMoveTo: true);
+      //extractPath.getBounds()
       linePath.addPath(extractPath, Offset(0, 0));
       shadowPath = extractPath;
     }

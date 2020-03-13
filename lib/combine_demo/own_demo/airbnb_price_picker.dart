@@ -61,6 +61,8 @@ class AirbnbPricePickerState extends State<AirbnbPricePicker> {
         Colors.orange.withOpacity(0.8),
         Colors.orangeAccent.withOpacity(0.5)
       ],
+      leftValue: 0.35,
+      rightValue: 0.55,
     );
 
     return Container(

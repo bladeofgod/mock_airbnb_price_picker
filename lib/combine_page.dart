@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/price_slider/price_slier_widget.dart';
+import 'package:flutter_slider_demo/fake_data.dart';
 
 import 'combine_demo/own_demo/airbnb_price_picker.dart';
 import 'combine_demo/own_demo/curve_chart_line.dart';
@@ -22,18 +23,18 @@ class CombinePage extends StatefulWidget{
 
 class CombinePageState extends State<CombinePage> {
 
-  var dataList = [
-    ChartBean(x: "\$2000", y: 32),
-    ChartBean(x: "\$1100", y: 48),
-    ChartBean(x: "\$1400", y: 32),
-    ChartBean(x: "\$500", y: 24),
-    ChartBean(x: "\$800", y: 50),
-    ChartBean(x: "\$1800", y: 25),
-    ChartBean(x: "\$1200", y: 18),
-    ChartBean(x: "\$2000", y: 32),
-    ChartBean(x: "\$1100", y: 48),
-    ChartBean(x: "\$1400", y: 32),
-  ];
+//  var dataList = [
+//    ChartBean(x: "\$2000", y: 32),
+//    ChartBean(x: "\$1100", y: 48),
+//    ChartBean(x: "\$1400", y: 32),
+//    ChartBean(x: "\$500", y: 24),
+//    ChartBean(x: "\$800", y: 50),
+//    ChartBean(x: "\$1800", y: 25),
+//    ChartBean(x: "\$1200", y: 18),
+//    ChartBean(x: "\$2000", y: 32),
+//    ChartBean(x: "\$1100", y: 48),
+//    ChartBean(x: "\$1400", y: 32),
+//  ];
 
   //默认左右截取位置
   double leftValue =0,
@@ -41,7 +42,7 @@ class CombinePageState extends State<CombinePage> {
 
   @override
   Widget build(BuildContext context) {
-
+    //dataList = FakeData.listLong;
     return Material(
       child: Container(
         color: Colors.white,
@@ -49,11 +50,11 @@ class CombinePageState extends State<CombinePage> {
           alignment: AlignmentDirectional.center,
           children: <Widget>[
             PriceSliderWidget(
-              list:dataList ,
+              list:FakeData.listLong ,
               rootHeight: 300,
               leftSlidListener: (isDragging,leftIndex){
                 ///left
-                leftValue = leftIndex/ dataList.length;
+                leftValue = leftIndex/ FakeData.listLong.length;
                 print("left index : $leftIndex ___ ratio : $leftValue");
                 setState(() {
 
@@ -61,7 +62,7 @@ class CombinePageState extends State<CombinePage> {
               },
               rightSlidListener: (isDragging,rightIndex){
                 ///right
-                rightValue = (dataList.length - rightIndex) / dataList.length;
+                rightValue = (FakeData.listLong.length - rightIndex) / FakeData.listLong.length;
                 print("right index : $rightIndex ___ ratio : $rightValue");
                 setState(() {
 
@@ -80,19 +81,7 @@ class CombinePageState extends State<CombinePage> {
     var curveChartLine = CurveChartLine(
       //金额500-2000
       //房屋数量10-50
-      chartBeans: [
-        ChartBean(x: "\$2000", y: 32),
-        ChartBean(x: "\$1100", y: 48),
-        ChartBean(x: "\$1400", y: 32),
-        ChartBean(x: "\$500", y: 24),
-        ChartBean(x: "\$800", y: 50),
-        ChartBean(x: "\$1800", y: 25),
-        ChartBean(x: "\$1200", y: 18),
-        ChartBean(x: "\$2000", y: 32),
-        ChartBean(x: "\$1100", y: 48),
-        ChartBean(x: "\$1400", y: 32),
-
-      ],
+      chartBeans: FakeData.listLong,
       //整个图表的宽高。
       size: Size(MediaQuery.of(context).size.width,
           MediaQuery.of(context).size.height / 5 * 1.6),
