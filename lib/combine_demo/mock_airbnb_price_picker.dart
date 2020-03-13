@@ -8,6 +8,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/airbnb_price_picker.dart';
+import 'package:flutter_slider_demo/combine_demo/own_demo/price_slider/price_slier_widget.dart';
 import 'package:flutter_slider_demo/price_slider.dart';
 
 import '../chart_example.dart';
@@ -66,7 +67,7 @@ class PricePickerState extends State<PricePicker> {
             child: Text("combine demo ( price slider)"),
             onPressed: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (ctx){
-                return AirbnbPricePicker();
+                return PriceSliderWidget();
               }));
             },
           ),
