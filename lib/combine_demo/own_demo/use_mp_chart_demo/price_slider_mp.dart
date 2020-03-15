@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/price_slider/price_slier_widget.dart';
+import 'package:mp_chart/mp/chart/line_chart.dart';
 import 'package:mp_chart/mp/controller/line_chart_controller.dart';
 import 'package:mp_chart/mp/core/adapter_android_mp.dart';
 import 'package:mp_chart/mp/core/data/line_data.dart';
@@ -174,6 +175,13 @@ class PriceSliderMPState extends State<PriceSliderMP> {
 
 
   Widget buildLineChart(){
+
+    var lineChart = LineChart(controller);
+    //禁用动画
+//    controller.animator
+//      ..reset()
+//      ..animateXY1(2000, 2000);
+    return lineChart;
 
   }
 
