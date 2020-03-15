@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/airbnb_price_picker.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/price_slider/price_slier_widget.dart';
+import 'package:flutter_slider_demo/combine_demo/own_demo/use_mp_chart_demo/price_slider_mp.dart';
 import 'package:flutter_slider_demo/combine_page.dart';
 import 'package:flutter_slider_demo/price_slider.dart';
 
@@ -80,6 +81,17 @@ class PricePickerState extends State<PricePicker> {
             onPressed: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (ctx){
                 return CombinePage();
+              }));
+            },
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          RaisedButton(
+            child: Text("price slider with MP chart "),
+            onPressed: (){
+              Navigator.of(context).push(new MaterialPageRoute(builder: (ctx){
+                return PriceSliderMP();
               }));
             },
           ),
