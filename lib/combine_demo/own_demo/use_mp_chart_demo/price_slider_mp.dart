@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_demo/combine_demo/own_demo/price_slider/price_slier_widget.dart';
+import 'package:mp_chart/mp/chart/line_chart.dart';
 import 'package:mp_chart/mp/controller/line_chart_controller.dart';
 import 'package:mp_chart/mp/core/adapter_android_mp.dart';
 import 'package:mp_chart/mp/core/data/line_data.dart';
@@ -32,7 +33,7 @@ class PriceSliderMP extends StatefulWidget{
 class PriceSliderMPState extends State<PriceSliderMP> {
 
   var random = Random(1);
-  int _count = 45;
+  int _count = 75;
   double _range = 100.0;
 
 
@@ -95,7 +96,8 @@ class PriceSliderMPState extends State<PriceSliderMP> {
     var desc = Description()..enabled = false;
     controller = LineChartController(
         axisLeftSettingFunction: (axisLeft, controller) {
-          axisLeft.enabled = (false);
+          axisLeft.enabled = false;
+          //axisLeft.setLabelCount2(6, false);
 //          axisLeft
 //            ..typeface = Util.LIGHT
 //            ..setLabelCount2(6, false)
@@ -139,32 +141,19 @@ class PriceSliderMPState extends State<PriceSliderMP> {
     return Material(
       child: Container(
         color: Colors.white,
-        child: Stack(
-          alignment: AlignmentDirectional.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          //alignment: AlignmentDirectional.center,
           children: <Widget>[
 
-            PriceSliderWidget(
-              list:FakeData.listLong ,
-              rootHeight: 300,
-              leftSlidListener: (isDragging,leftIndex){
-                ///left
-                leftValue = leftIndex/ FakeData.listLong.length;
-                print("left index : $leftIndex ___ ratio : $leftValue");
-                setState(() {
+            //buildPriceSlider(),
 
-                });
-              },
-              rightSlidListener: (isDragging,rightIndex){
-                ///right
-                rightValue = (FakeData.listLong.length - rightIndex) / FakeData.listLong.length;
-                print("right index : $rightIndex ___ ratio : $rightValue");
-                setState(() {
+            sliderWidget(),
 
-                });
-              },
+            Container(
+              height: 300,
+              child: buildLineChart(),
             ),
-
-            buildLineChart(),
 
           ],
         ),
@@ -172,8 +161,55 @@ class PriceSliderMPState extends State<PriceSliderMP> {
     );
   }
 
+  double rangeStart = 0,rangeEnd = 74;
+
+  Widget sliderWidget(){
+    return RangeSlider(
+      values: RangeValues(rangeStart, rangeEnd),
+      min: 0,
+      max: 74,
+      divisions: 74,
+      onChanged: (values){
+        if(values.start == values.end)return;
+        print("${values.start}   ___  ${values.end} ");
+        resetChartValues(values.start,values.end);
+      },
+    );
+  }
+  resetChartValues(double start,double end){
+    print("start ${start} ,  end ${end}");
+    rangeStart = start;
+    rangeEnd = end;
+
+    for(int i=0;i<values.length;i++){
+      if(i < start){
+        values[i].y = 0;
+      }
+      if(i > end){
+        values[i].y = 0;
+      }
+    }
+
+    setState(() {
+
+
+    });
+  }
+
+
+
+  Widget buildPriceSlider(){
+    return buildLineChart();
+  }
+
 
   Widget buildLineChart(){
+    var lineChart = LineChart(controller);
+    controller.autoScaleMinMaxEnabled = false;
+//    controller.animator
+//      ..reset()
+//      ..animateXY1(2000, 2000);
+    return lineChart;
 
   }
 
