@@ -144,9 +144,9 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                 ),
 
                 Container(
-                  width: 4,
+                  width: 1,
                   height: 100,
-                  color: Colors.red,
+                  color: Colors.grey,
                 ),
                 GestureDetector(
                   child: _imageItem(),
@@ -210,10 +210,13 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                   },
                 ),
 
-                Visibility(
-                  visible:  ! isLeftDragging,
-                  child: Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
-                ),
+                Text("$_leftPrice",style: TextStyle(fontSize: 12,
+                    color:!isLeftDragging ? Colors.black : Colors.white),)
+
+//                Visibility(
+//                  visible:  ! isLeftDragging,
+//                  child: Text("$_leftPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+//                ),
 
               ],
             ),
@@ -245,9 +248,9 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
               ),
 
               Container(
-                width: 4,
+                width: 1,
                 height: 100,
-                color: Colors.red,
+                color: Colors.grey,
               ),
               GestureDetector(
                 child: _imageItem(),
@@ -307,10 +310,12 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                   }
                 },
               ),
-              Visibility(
-                visible: ! isRightDragging,
-                child: Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
-              ),
+//              Visibility(
+//                visible: ! isRightDragging,
+//                child: Text("$_rightPrice",style: TextStyle(fontSize: 12,color: Colors.black),),
+//              ),
+              Text("$_rightPrice",style: TextStyle(fontSize: 12,
+                  color:!isRightDragging ? Colors.black : Colors.white),)
             ],
           ),
 

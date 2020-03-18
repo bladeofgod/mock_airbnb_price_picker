@@ -157,7 +157,7 @@ class PriceSliderMPState extends State<PriceSliderMP> {
           children: <Widget>[
             Container(
               width: size.width,
-              height: 150,
+              height: 160,
 
               child: Stack(
                 alignment: AlignmentDirectional.topCenter,
@@ -170,9 +170,6 @@ class PriceSliderMPState extends State<PriceSliderMP> {
                     child: Stack(
                       children: <Widget>[
                         BottomLineChart(bottomValues),
-//                  Container(
-//                    color: Colors.red,
-//                  ),
                         buildLineChart(),
                       ],
                     ),
@@ -181,6 +178,8 @@ class PriceSliderMPState extends State<PriceSliderMP> {
                   Positioned(
                     bottom: 0,
                     child: Container(
+                      height: 160,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       width: size.width,
                       child:
                       priceSlider(size),
@@ -211,12 +210,13 @@ class PriceSliderMPState extends State<PriceSliderMP> {
     return PriceSliderWidget(
       list:list ,
       rootWidth: size.width-40,
-      rootHeight: 300,
+      rootHeight: 160,
       leftSlidListener: (isDragging,leftIndex){
         ///left
         //leftValue = leftIndex/ FakeData.listLong.length;
         print("left index : $leftIndex ___ ratio : $leftValue");
         rangeStart = leftIndex / 1;
+
         resetChartValues(rangeStart, rangeEnd);
 
 //        setState(() {
