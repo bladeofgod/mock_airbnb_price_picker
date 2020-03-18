@@ -76,12 +76,12 @@ class PriceSliderMPState extends State<PriceSliderMP> {
     set1.setCubicIntensity(0.2);
     set1.setDrawFilled(true);
     set1.setDrawCircles(false);
-    set1.setLineWidth(1.8);
+    set1.setLineWidth(1);
     set1.setCircleRadius(4);
     set1.setDrawValues(false);//点击图表 不显示value
     //set1.setCircleColor(Colors.red);//折线上的圆点颜色
     set1.setHighLightColor(Colors.yellowAccent);
-    set1.setColor1(Colors.red);//曲线颜色
+    set1.setColor1(Colors.black45);//曲线颜色
     set1.setFillColor(Colors.grey);//填充颜色
     //set1.setFillAlpha(100);
     set1.setDrawHorizontalHighlightIndicator(false);
