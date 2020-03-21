@@ -26,6 +26,7 @@ class PriceSliderWidget extends StatefulWidget{
   final Function rightSlidListener,leftSlidListener;
 
 
+
   PriceSliderWidget({@required this.list,
     this.leftIndicatorLineColor = Colors.red,
     this.rightIndicatorLineColor = Colors.red,
@@ -62,6 +63,9 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
   //是否拖动中
   bool isLeftDragging = false;
   bool isRightDragging = false;
+
+  final GlobalKey leftKey = GlobalKey();
+  final GlobalKey rightKey = GlobalKey();
 
   @override
   void initState() {
@@ -129,6 +133,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
     //减掉左右边界20 *2
     double singleW = (screenWidth)/segmentPart;
     return Positioned(
+      key: leftKey,
         left: _leftImageMargin,
         //top: 0,
         child: Stack(
@@ -153,7 +158,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                   //水平方向移动
                   onHorizontalDragUpdate: (DragUpdateDetails details) {
                     isLeftDragging = true;
-                    print('拖拽中');
+                    //print('拖拽中');
                     if(_leftImageMargin < 0) {//处理左边边界
                       _leftImageMargin = 0;
                       _leftBlackLineW = 2;
@@ -167,7 +172,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                     }
 
                     double _leftImageMarginFlag = _leftImageMargin;
-                    print('拖拽结束');
+                    //print('拖拽结束');
                     //刷新上方的 price indicator
                     for(int i = 0; i< widget.list.length;i++){
                       if(_leftImageMarginFlag < singleW * (0.5 + i)){
@@ -185,7 +190,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                     isLeftDragging = false;
                     double singleW = (screenWidth-40)/segmentPart;
                     double _leftImageMarginFlag = _leftImageMargin;
-                    print('拖拽结束');
+                    //print('拖拽结束');
                     for(int i = 0; i< widget.list.length;i++){
                       if(_leftImageMarginFlag < singleW * (0.5 + i)){
                         if(i == 0){
@@ -201,7 +206,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                       }
                     }
 
-                    print('选中第$_leftImageCurrentIndex个');
+                    //print('选中第$_leftImageCurrentIndex个');
                     setState(() {});// 刷新UI
 
                     if(widget.leftSlidListener != null){
@@ -232,6 +237,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
   _rightImageBlock(BuildContext context, double screenWidth) {
     double singleW = (screenWidth)/segmentPart;
     return Positioned(
+      key: rightKey,
       right: _rightImageMargin,
       //top: 0,
       child: Stack(
@@ -270,7 +276,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                   }
                   //double singleW = (screenWidth-40)/segmentPart;
                   double _rightImageMarginFlag = _rightImageMargin;
-                  print('拖拽结束');
+                  //print('拖拽结束');
                   for(int i = 0; i< widget.list.length;i++){
                     if(_rightImageMarginFlag < singleW * (0.5 + i)){
                       _rightPrice = widget.list[(widget.list.length - 1) -i].x;
@@ -287,7 +293,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                   isRightDragging = false;
                   double singleW = (screenWidth)/segmentPart;
                   double _rightImageMarginFlag = _rightImageMargin;
-                  print('拖拽结束');
+                  //print('拖拽结束');
                   for(int i = 0; i< widget.list.length;i++){
                     if(_rightImageMarginFlag < singleW * (0.5 + i)){
                       if(i == 0){
@@ -302,7 +308,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
                       break;
                     }
                   }
-                  print('选中第$_rightImageCurrentIndex个');
+                  //print('选中第$_rightImageCurrentIndex个');
                   setState(() {});// 刷新UI
 
                   if(widget.rightSlidListener != null){
@@ -330,6 +336,23 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
       * 横线视图模块,包括黄色横线和黑色横线
       * */
   _lineBlock(BuildContext context, double screenWidth) {
+
+    double width = widget.rootWidth;
+
+    if(leftKey.currentContext != null && rightKey.currentContext != null){
+      RenderBox boxLeft = leftKey.currentContext.findRenderObject();
+      Offset offsetLeft = boxLeft.localToGlobal(Offset.zero);
+      print("left key : $offsetLeft");
+      RenderBox boxRight = rightKey.currentContext.findRenderObject();
+      Offset offsetRight = boxRight.localToGlobal(Offset.zero);
+      print("right key : $offsetRight");
+
+      width = offsetRight.dx - offsetLeft.dx;
+
+    }
+
+
+
     return Row(
       children: <Widget>[
 //        SizedBox(
@@ -340,12 +363,18 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
             Container(// 黄色横线
               color: Colors.transparent,
               height: 30,
-              width: screenWidth - 20,
+              width: screenWidth ,
               alignment: Alignment.center,
+              padding: EdgeInsets.only(
+                ///使用这个效率高
+                left: _leftBlackLineW,right: _rightBlackLineW
+              ),
               child: Container(
-                //color: Color.fromRGBO(254, 216, 54, 1),
+                /// 这里本想 _leftImageMargin、_leftBlackLineW等来控制
+                /// 发现 在考虑两侧同时滑动时比较麻烦，还是改用key
+                //width:width,
+                color: Colors.red,
                 height: 2,
-                width: screenWidth - 20,
               ),
             ),
 //            Positioned(// 左边黑色竖线
