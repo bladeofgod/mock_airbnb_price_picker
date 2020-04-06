@@ -53,6 +53,7 @@ class CombinePageState extends State<CombinePage> {
               list:FakeData.listLong ,
               rootHeight: 300,
               leftSlidListener: (isDragging,leftIndex){
+                if(leftIndex == null) return;
                 ///left
                 leftValue = leftIndex/ FakeData.listLong.length;
                 print("left index : $leftIndex ___ ratio : $leftValue");
@@ -61,6 +62,7 @@ class CombinePageState extends State<CombinePage> {
                 });
               },
               rightSlidListener: (isDragging,rightIndex){
+                if(rightIndex == null) return;
                 ///right
                 rightValue = (FakeData.listLong.length - rightIndex) / FakeData.listLong.length;
                 print("right index : $rightIndex ___ ratio : $rightValue");

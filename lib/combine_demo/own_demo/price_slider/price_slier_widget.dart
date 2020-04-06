@@ -80,7 +80,7 @@ class PriceSliderWidgetState extends State<PriceSliderWidget> {
   @override
   Widget build(BuildContext context) {
     //final screenWidth = MediaQuery.of(context).size.width;
-    final screenWidth = widget.rootWidth;
+    final screenWidth = widget.rootWidth ?? MediaQuery.of(context).size.width;
     return Material(
       color: Colors.transparent,
       child: Container(
